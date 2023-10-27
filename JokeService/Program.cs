@@ -1,10 +1,20 @@
-using JokeService.WindowsService;
+using Jokes.WindowsService;
+using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Logging.EventLog;
 
-IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
+IHostBuilder builder = Host.CreateDefaultBuilder(args)
+    .UseWindowsService(options =>
     {
-        services.AddHostedService<WindowsBackgroundService>();
+        options.ServiceName = ".NET Joke Service";
     })
-    .Build();
+    .ConfigureServices((context, services) =>
+    {
+        LoggerProviderOptions.RegisterProviderOptions<
+            EventLogSettings, EventLogLoggerProvider>(services);
+    
+        services.AddSingleton<JokeService>();
+        services.AddHostedService<WindowsBackgroundService>();
+    });
 
+IHost host = builder.Build();
 host.Run();
