@@ -1,4 +1,4 @@
-﻿namespace App.WindowsService;
+﻿namespace JokeService.WindowsService;
 
 public sealed class JokeService
 {
